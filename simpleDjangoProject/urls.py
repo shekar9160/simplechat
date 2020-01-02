@@ -35,5 +35,19 @@ urlpatterns = [
     #passing data from url to controller
     path('htmlWithDataPass/<str:url_data>', views.PassingDatatoController, name='html_data_pass'),
 
+    path('addData',views.addData,name="add_data"),
+
+    path('add_student',views.add_student,name="add_student"),
+
+    path('add_teacher', views.add_teacher, name="add_teacher"),
+
+    path('show_all_data', views.show_all_data, name="show_all_data"),
+
+    path('update_student/<str:student_id>',views.update_student,name="update_student"),
+
+    path('edit_student', views.edit_student, name="edit_student"),
+
+    path('delete_student/<str:student_id>', views.delete_student, name="delete_student"),
+
     path('admin/', admin.site.urls),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
