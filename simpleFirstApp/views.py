@@ -1,8 +1,11 @@
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Students,Teachers
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -10,7 +13,7 @@ def FirstPageController(request):
     return HttpResponse("<h1>My First Django Project Page</h1>")
 
 def IndexPageController(request):
-    return HttpResponse("<h1>This is Index Page</h1>")
+    return HttpResponseRedirect("/homePage")
 
 def HtmlPageController(request):
     return render(request,"htmlpage.html")
@@ -23,9 +26,11 @@ def HtmlPageControllerWithData(request):
 def PassingDatatoController(request,url_data):
     return HttpResponse("<h2>This is Data Coming Via URL : "+url_data)
 
+@login_required(login_url="/login_user/")
 def addData(request):
     return render(request,"add_data.html")
 
+@login_required(login_url="/login_user/")
 def add_student(request):
     if request.method!="POST":
         return HttpResponse("<h2>Method Now Allowed</h2>")
@@ -42,6 +47,7 @@ def add_student(request):
 
         return HttpResponseRedirect("/addData")
 
+@login_required(login_url="/login_user/")
 def add_teacher(request):
     if request.method!="POST":
         return HttpResponse("<h2>Method Now Allowed</h2>")
@@ -55,19 +61,21 @@ def add_teacher(request):
 
         return HttpResponseRedirect("/addData")
 
+@login_required(login_url="/login_user/")
 def show_all_data(request):
     all_teacher=Teachers.objects.all()
     all_student=Students.objects.all()
 
     return render(request,"show_data.html",{'students':all_student,'teachers':all_teacher})
 
+@login_required(login_url="/login_user/")
 def delete_student(request,student_id):
     student=Students.objects.get(id=student_id)
     student.delete()
     messages.error(request, "Deleted Successfully")
     return HttpResponseRedirect("/show_all_data")
 
-
+@login_required(login_url="/login_user/")
 def update_student(request,student_id):
     student=Students.objects.get(id=student_id)
     if student==None:
@@ -75,6 +83,7 @@ def update_student(request,student_id):
     else:
         return render(request,"student_edit.html",{'student':student})
 
+@login_required(login_url="/login_user/")
 def edit_student(request):
     if request.method!="POST":
         return HttpResponse("<h2>Method Not Allowed</h2>")
@@ -104,3 +113,55 @@ def edit_student(request):
             messages.success(request,"Updated Successfully")
             return HttpResponseRedirect("update_student/"+str(student.id)+"")
 
+
+def LoginUser(request):
+    if request.user==None or request.user =="" or request.user.username=="":
+        return render(request,"login_page.html")
+    else:
+        return HttpResponseRedirect("/homePage")
+
+def RegisterUser(request):
+    if request.user==None:
+        return render(request,"register_page.html")
+    else:
+        return HttpResponseRedirect("/homePage")
+
+def SaveUser(request):
+    if request.method!="POST":
+        return HttpResponse("<h2>Method Not Allowed</h2>")
+    else:
+        username=request.POST.get('username','')
+        email=request.POST.get('email','')
+        password=request.POST.get('password','')
+
+        if not (User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists()):
+            User.objects.create_user(username,email,password)
+            messages.success(request,"User Created Successfully")
+            return HttpResponseRedirect('/register_user')
+        else:
+            messages.error(request,"Email or Username Already Exist")
+            return HttpResponseRedirect('/register_user')
+
+def DoLoginUser(request):
+    if request.method!="POST":
+        return HttpResponse("<h2>Method Not Allowed")
+    else:
+        username=request.POST.get('username','')
+        password=request.POST.get('password','')
+        user=authenticate(username=username,password=password)
+        login(request,user)
+
+        if user!=None:
+            return HttpResponseRedirect('/homePage')
+        else:
+            messages.error(request,"Invalid Login Details")
+            return HttpResponseRedirect('/login_user')
+
+@login_required(login_url="/login_user/")
+def HomePage(request):
+    return render(request,"home_page.html")
+
+def LogoutUser(request):
+    logout(request)
+    request.user=None
+    return HttpResponseRedirect("/login_user")

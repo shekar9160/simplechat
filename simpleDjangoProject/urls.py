@@ -49,5 +49,17 @@ urlpatterns = [
 
     path('delete_student/<str:student_id>', views.delete_student, name="delete_student"),
 
+    path('register_user/',views.RegisterUser,name="register_user"),
+
+    path('login_user/', views.LoginUser, name="login_user"),
+
+    path('save_user',views.SaveUser,name="save_user"),
+
+    path('do_loginn_user',views.DoLoginUser,name="do_login_user"),
+
+    path('homePage/',views.HomePage,name="homepage"),
+
+    path('logout/',views.LogoutUser,name="logout"),
+
     path('admin/', admin.site.urls),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
