@@ -1,9 +1,10 @@
 from django.contrib import messages
+from django.core import serializers
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import Students,Teachers
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from .models import Students, Teachers, Courses
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 
@@ -165,3 +166,8 @@ def LogoutUser(request):
     logout(request)
     request.user=None
     return HttpResponseRedirect("/login_user")
+
+def testStudent(request):
+    student=Students.objects.all()
+    student_obj=serializers.serialize('python',student)
+    return JsonResponse(student_obj,safe=False)

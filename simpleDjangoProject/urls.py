@@ -62,4 +62,7 @@ urlpatterns = [
     path('logout/',views.LogoutUser,name="logout"),
 
     path('admin/', admin.site.urls),
+
+    path('teststudent',views.testStudent,name='test_student')
+
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
