@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
-from simpleFirstApp import views
+from simpleFirstApp import views, apiViews
 from simpleDjangoProject import settings
 
 urlpatterns = [
@@ -63,6 +63,8 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
-    path('teststudent',views.testStudent,name='test_student')
+    path('teststudent',views.testStudent,name='test_student'),
+
+    path('getSubjects',apiViews.getSubjects,name='subjects')
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

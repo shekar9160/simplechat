@@ -4,7 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from .models import Students, Teachers, Courses
+from .models import Students, Teachers, Courses, StudentSubjects, Subjects
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 
@@ -29,7 +29,8 @@ def PassingDatatoController(request,url_data):
 
 @login_required(login_url="/login_user/")
 def addData(request):
-    return render(request,"add_data.html")
+    courses=Courses.objects.all()
+    return render(request,"add_data.html",{'courses':courses})
 
 @login_required(login_url="/login_user/")
 def add_student(request):
@@ -40,10 +41,19 @@ def add_student(request):
         fs=FileSystemStorage()
         profile_img=fs.save(file.name,file)
         try:
-            student=Students(name=request.POST.get('name',''),email=request.POST.get('email',''),standard=request.POST.get('standard',''),hobbies=request.POST.get('hobbies',''),roll_no=request.POST.get('roll_no',''),bio=request.POST.get('bio',''),profile_image=profile_img)
+            course=Courses.objects.get(id=request.POST.get('course',''))
+            student=Students(name=request.POST.get('name',''),email=request.POST.get('email',''),standard=request.POST.get('standard',''),hobbies=request.POST.get('hobbies',''),roll_no=request.POST.get('roll_no',''),bio=request.POST.get('bio',''),profile_image=profile_img,course=course)
             student.save()
+
+
+            subject_list=request.POST.getlist('subjects[]')
+            for subject in subject_list:
+                subj=Subjects.objects.get(id=subject)
+                student_subject=StudentSubjects(subject_id=subj,student_id=student)
+                student_subject.save()
             messages.success(request,"Added Successfully")
-        except:
+        except Exception as e:
+            print(e)
             messages.error(request,"Failed to Add Student")
 
         return HttpResponseRedirect("/addData")

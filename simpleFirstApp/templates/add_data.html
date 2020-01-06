@@ -60,6 +60,27 @@ border:1px solid dodgerblue;
                     <input type="file" name="profile" class="form-control">
                 </div>
                 <div class="form-group">
+                    <label class="control-label">Course : </label>
+                    <select name="course" class="form-control course">
+                        {% for course in courses %}
+                            <option value="{{ course.id }}">{{ course.course_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                 <div class="subject-div">
+
+                 </div>
+                 <div class="form-group">
+                     <div class="row">
+                         <div class="col-lg-6">
+                             <button class="add_subject btn btn-block btn-info" type="button">Add Subject</button>
+                         </div>
+                         <div class="col-lg-6">
+                             <button class="remove_subject btn btn-block btn-danger" type="button">Remove Subject</button>
+                         </div>
+                     </div>
+                 </div>
+                <div class="form-group">
                     <input type="submit" name="submit" class="btn btn-block btn-success" value="Add Students">
                 </div>
 
@@ -114,5 +135,44 @@ border:1px solid dodgerblue;
 {% endblock bodydata %}
 
 {% block custom_js %}
+<script>
+    $(document).ready(function(){
+        console.log("Ready");
+        var div_data="";
+
+        fetchSubjects($(".course").val());
+        $(".course").change(function(){
+            $(".subject-div").html('')
+            fetchSubjects($(this).val());
+        });
+
+        $(".add_subject").click(function(){
+            $(".subject-div").append(div_data);
+        });
+
+        $(".remove_subject").click(function(){
+            $(".subject-div .form-group:last").remove()
+        })
+
+        function fetchSubjects(course_id){
+           $.ajax({
+            url:'http://127.0.0.1:8000/getSubjects',
+            type:'POST',
+            data:{course_id:course_id},
+           })
+           .done(function(response){
+                div_data="<div class='form-group'><select class='form-control' name='subjects[]'>"
+                for(key in response){
+                    div_data+="<option value='"+response[key]['pk']+"'>"+response[key]['fields']['subject_name']+"</option>";
+                }
+                div_data+='</select></div>'
+           })
+           .fail(function(){
+                console.log("Failed")
+           })
+        }
+
+    });
+</script>
 {% endblock custom_js %}
 
