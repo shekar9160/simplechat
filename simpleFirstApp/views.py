@@ -1,9 +1,12 @@
 from django.contrib import messages
 from django.core import serializers
 from django.core.files.storage import FileSystemStorage
+from django.core.mail import send_mail, EmailMessage
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+
+from simpleDjangoProject.settings import EMAIL_HOST_USER
 from .models import Students, Teachers, Courses, StudentSubjects, Subjects
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
@@ -181,3 +184,41 @@ def testStudent(request):
     student=Students.objects.all()
     student_obj=serializers.serialize('python',student)
     return JsonResponse(student_obj,safe=False)
+
+def SendPlainEmail(request):
+    message=request.POST.get('message','')
+    subject=request.POST.get('subject','')
+    mail_id=request.POST.get('email','')
+    email=EmailMessage(subject,message,EMAIL_HOST_USER,[mail_id])
+    email.content_subtype='html'
+    email.send()
+    return HttpResponse("Sent")
+
+def send_mail_plain_with_stored_file(request):
+    message=request.POST.get('message','')
+    subject=request.POST.get('subject','')
+    mail_id=request.POST.get('email','')
+    email=EmailMessage(subject,message,EMAIL_HOST_USER,[mail_id])
+    email.content_subtype='html'
+
+    file=open("README.md","r")
+    file2=open("manage.py","r")
+    email.attach("README.md",file.read(),'text/plain')
+    email.attach("manage.py",file2.read(),'text/plain')
+
+    email.send()
+    return HttpResponse("Sent")
+
+
+def send_mail_plain_with_file(request):
+    message = request.POST.get('message', '')
+    subject = request.POST.get('subject', '')
+    mail_id = request.POST.get('email', '')
+    email = EmailMessage(subject, message, EMAIL_HOST_USER, [mail_id])
+    email.content_subtype = 'html'
+
+    file = request.FILES['file']
+    email.attach(file.name, file.read(), file.content_type)
+
+    email.send()
+    return HttpResponse("Sent")

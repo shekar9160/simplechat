@@ -65,6 +65,13 @@ urlpatterns = [
 
     path('teststudent',views.testStudent,name='test_student'),
 
-    path('getSubjects',apiViews.getSubjects,name='subjects')
+    path('getSubjects',apiViews.getSubjects,name='subjects'),
+
+    path('send_mail_plain',views.SendPlainEmail,name='plain_email'),
+
+    path('send_mail_plain_with_stored_file', views.send_mail_plain_with_stored_file, name='plain_email'),
+
+    path('send_mail_plain_with_file', views.send_mail_plain_with_file, name='plain_email'),
+
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
