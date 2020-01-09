@@ -5,6 +5,11 @@ from django.core.mail import send_mail, EmailMessage
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.template import Context
+from django.template.loader import get_template
+from django.utils.html import escape
+from xhtml2pdf import pisa
+from io import StringIO, BytesIO
 
 from simpleDjangoProject.settings import EMAIL_HOST_USER
 from .models import Students, Teachers, Courses, StudentSubjects, Subjects
@@ -222,3 +227,39 @@ def send_mail_plain_with_file(request):
 
     email.send()
     return HttpResponse("Sent")
+
+def setSession(request):
+    request.session['session_data_1']="This is Session 1 Data"
+    request.session['session_data_2']="This is Session 2 Data"
+    return HttpResponse("Session Set")
+
+def view_session(request):
+    if request.session.has_key("session_data_1"):
+        session_data_1=request.session['session_data_1']
+    else:
+        session_data_1="Data is Blank"
+
+    if request.session.has_key("session_data_2"):
+        session_data_2=request.session['session_data_2']
+    else:
+        session_data_2="Data is Blank"
+
+    return render(request,"show_session_data.html",{"session_data_1":session_data_1,"session_data_2":session_data_2})
+
+def del_session(request):
+    del request.session['session_data_1']
+    del request.session['session_data_2']
+    return HttpResponse("Session Deleted")
+
+def getPdfPage(request):
+    all_student=Students.objects.all()
+    data={'students':all_student}
+    template=get_template("pdf_page.html")
+    data_p=template.render(data)
+    response=BytesIO()
+
+    pdfPage=pisa.pisaDocument(BytesIO(data_p.encode("UTF-8")),response)
+    if not pdfPage.err:
+        return HttpResponse(response.getvalue(),content_type="application/pdf")
+    else:
+        return HttpResponse("Error Generating PDF")

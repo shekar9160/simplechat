@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        th,td{
+        padding:3px;
+        }
+        th{
+        background-color:black;
+        color:white;
+        }
+    </style>
+</head>
+<body>
+<table class="table" border="1">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Standard</th>
+                        <th>Hobbies</th>
+                        <th>Roll No.</th>
+                        <th>Bio</th>
+                        <th>Profile</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for student in students %}
+                        <tr>
+                            <td>{{ student.id }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.email }}</td>
+                            <td>{{ student.standard }}</td>
+                            <td>{{ student.hobbies }}</td>
+                            <td>{{ student.roll_no }}</td>
+                            <td>{{ student.bio }}</td>
+                            <td><img src="/media/{{ student.profile_image }}" style="width:250px;height:100px"></td>
+                            <td>{{ student.created_at }}</td>
+                            <td><a href="/delete_student/{{student.id}}" class="btn btn-danger">Delete</a><br><a class="btn btn-success" href="/update_student/{{student.id}}">Update</a></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+</body>
+</html>
