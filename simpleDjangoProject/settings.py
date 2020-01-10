@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'simpleFirstApp'
+    'simpleFirstApp',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,10 @@ EMAIL_PORT=587
 EMAIL_HOST_USER='YOUR EMAIL'
 EMAIL_HOST_PASSWORD='YOUR PASWORD'
 EMAIL_USE_TLS=True
+
+ASGI_APPLICATION="simpleDjangoProject.routing.application"
+CHANNEL_LAYERS={
+    "default":{
+        "BACKEND":"channels.layers.InMemoryChannelLayer"
+    }
+}
