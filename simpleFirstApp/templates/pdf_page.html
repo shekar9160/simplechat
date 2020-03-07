@@ -11,9 +11,37 @@
         background-color:black;
         color:white;
         }
+
+        @page{
+         size:a4 portrait;
+             @frame header_frame {
+                   -pdf-frame-content:header_content;
+                   left:60pt;
+                   width:512pt;
+                   top:60pt;
+                   height:50pt
+             }
+             @frame footer_frame {
+                   -pdf-frame-content:footer_content;
+                   left:60pt;
+                   width:512pt;
+                   top:772pt;
+                   height:30pt
+             }
+             @frame content_frame {
+                left:50pt;
+                width:512pt;
+                top:90pt;
+                height:620pt;
+             }
+
+        }
     </style>
 </head>
 <body>
+<div id="header_content">
+    This is Header Print on Every Page of Pdf
+</div>
 <table class="table" border="1">
                     <tr>
                         <th>ID</th>
@@ -42,5 +70,8 @@
                         </tr>
                     {% endfor %}
                 </table>
+<div id="footer_content">
+    This is Footer Print on Every Page of Pdf Page No. <pdf:pagenumber> / Total Page : <pdf:pagecount>
+</div>
 </body>
 </html>
