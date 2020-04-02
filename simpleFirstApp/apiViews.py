@@ -38,6 +38,9 @@ def savestudent(request):
     if type == "roll_no":
         student.roll_no = value
 
+    if type == "created_at":
+        student.created_at = value
+
     student.save()
     return JsonResponse({"success":"Updated"})
 

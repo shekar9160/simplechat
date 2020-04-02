@@ -51,7 +51,7 @@ border:1px solid dodgerblue;
                             <td class="editable" data-id="{{ student.id }}" data-type="roll_no">{{ student.roll_no }}</td>
                             <td class="editable" data-id="{{ student.id }}" data-type="bio">{{ student.bio }}</td>
                             <td><img src="/media/{{ student.profile_image }}" style="width:250px;height:100px"></td>
-                            <td>{{ student.created_at }}</td>
+                            <td class="editable" data-id="{{ student.id }}" data-type="created_at">{{ student.created_at }}</td>
                             <td><a href="/delete_student/{{student.id}}" class="btn btn-danger">Delete</a><br><a class="btn btn-success" href="/update_student/{{student.id}}">Update</a></td>
                         </tr>
                     {% endfor %}
@@ -106,7 +106,13 @@ border:1px solid dodgerblue;
         $(document).ready(function(){
             $(document).on("dblclick",".editable",function(){
                 var value=$(this).text();
-                var input="<input type='text' class='input-data' value='"+value+"' class='form-control'>";
+                var data_type=$(this).data("type");
+                var input_type="text";
+                if(data_type=="created_at")
+                {
+                    input_type="datetime-local";
+                }
+                var input="<input type='"+input_type+"' class='input-data' value='"+value+"' class='form-control'>";
                 $(this).html(input);
                 $(this).removeClass("editable")
             });
